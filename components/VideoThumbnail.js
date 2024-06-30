@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function VideoThumbnail({ imageSource, title, author, duration }){
+export default function VideoThumbnail({ imageUrl, title, author, duration }){
   return (
     <TouchableOpacity style={styles.container}>
       <View style={styles.thumbnailContainer}>
-        <Image source={imageSource} style={styles.thumbnail} />
+        <Image style={styles.thumbnail} 
+        source={{uri: imageUrl}}  />
         <View style={styles.playIconContainer}>
           <MaterialIcons name="play-circle-outline" size={48} color="white" />
         </View>
@@ -22,22 +23,16 @@ export default function VideoThumbnail({ imageSource, title, author, duration })
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
-    borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
+    width:'100%',
+    height:'auto',
   },
   thumbnailContainer: {
     position: 'relative',
   },
   thumbnail: {
     width: '100%',
-    height: 150,
+    height: 180,
+    borderRadius:20,
   },
   playIconContainer: {
     position: 'absolute',
@@ -52,13 +47,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   author: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'gray',
   },
   duration: {
-    fontSize: 12,
+    fontSize: 16,
     color: 'gray',
   },
 });
-
-
