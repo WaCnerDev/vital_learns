@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { AntDesign, SimpleLineIcons, Feather } from "@expo/vector-icons";
 
-export default function SandIA() {
+export default function SandIA({title}) {
   return (
     <View style={styles.headerContent}>
-      <Text style={styles.txtTitulo}>Videos for a Healthy Life</Text>
+      <Text style={styles.txtTitulo}>{title}</Text>
       <View style={styles.inputContainer}>
         <AntDesign name="search1" size={25} color="black" />
         <TextInput
