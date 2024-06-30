@@ -6,6 +6,7 @@ import { AntDesign, SimpleLineIcons, Feather } from "@expo/vector-icons";
 import appFirebase from "../FireBaseAccess";
 import { collection, getFirestore, getDocs} from "firebase/firestore";
 import Filters from "../components/Filters";
+import SandIA from "../components/SandIA";
 
 const db = getFirestore(appFirebase);
 
@@ -40,26 +41,8 @@ export default function VideoScreen() {
   return (
     <View style={styles.mainContainer}>
       <NavTop />
-      <View style={styles.headerContent}>
-        <Text style={styles.txtTitulo}>Videos for a Healthy Life</Text>
-        <View style={styles.inputContainer}>
-          <AntDesign name="search1" size={25} color="black" />
-          <TextInput
-            style={styles.txtInput}
-            placeholder="What do you want to learn today?"
-          />
-        </View>
-        <Text style={styles.labelForm}>You can also learn through AI!</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.txtInput, styles.txtIA]}
-            placeholder="What do you need?"
-          />
-          <SimpleLineIcons style={styles.icon} name="microphone" size={25} color="#B72424" />
-          <Feather style={styles.icon} name="send" size={25} color="#B72424" />
-        </View>
-        <Filters labels={labels}/>
-      </View>
+      <SandIA title={"Videos for a Healthy Life"}/>
+      <Filters labels={labels}/>
       <View style={styles.popularContent}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           {list.map((video) => (
