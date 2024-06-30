@@ -7,6 +7,11 @@ import { FontAwesome, Entypo, AntDesign } from "@expo/vector-icons";
 
 export default function LoginScreen() {
     const navigation = useNavigation();
+    const [passwordVisible, setPasswordVisible] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!passwordVisible);
+    };
 
     return (
         <ScrollView>
@@ -24,22 +29,27 @@ export default function LoginScreen() {
                 <Text style={styles.txtLogin}>Enter your password</Text>
                 <View style={styles.inputContainer}>
                     <Entypo style={styles.icon} name="lock" size={30} color="#B72424" />
-                    <TextInput style={styles.txtInput} secureTextEntry={true} />
-                    <AntDesign name="eyeo" size={24} color="black" />
+                    <TextInput
+                        style={styles.txtInput}
+                        secureTextEntry={!passwordVisible}
+                    />
+                    <TouchableOpacity onPress={togglePasswordVisibility}>
+                        <AntDesign name={passwordVisible ? "eye" : "eyeo"} size={24} color="black" />
+                    </TouchableOpacity>
                 </View>
                 
                 <TouchableOpacity onPress={() => navigation.navigate("RecoverScreen")}>
                     <Text style={styles.txtForgot}>Forgot your password?</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("RecoverScreen")} style={styles.btnLogin}>
+                <TouchableOpacity onPress={() => navigation.navigate("MenuScreen")} style={styles.btnLogin}>
                     <Text style={styles.txtLoginButton}>Sign In</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
                     <Text style={styles.txtNonAccount}>
                         Don't have an account?
-                        <Text style={styles.txtSignUp}> Sign Up Now</Text>
+                        <Text style={styles.txtSignUp}>Sign Up Now</Text>
                     </Text>
                 </TouchableOpacity>
                 <StatusBar style="auto" />
@@ -51,8 +61,9 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 15,
         alignItems: "flex-start", 
+        width: "100%",
+        height: "auto",
     },
     txtTitulo: {
         fontSize: 25,
@@ -60,7 +71,7 @@ const styles = StyleSheet.create({
         color: 'black',
         textAlign: 'center',
         marginBottom: 10,
-        alignSelf: 'stretch'  // Se asegura que el título ocupe todo el ancho
+        alignSelf: 'stretch'
     },
     txtSubtitulo: {
         fontSize: 15,
@@ -112,10 +123,10 @@ const styles = StyleSheet.create({
     txtNonAccount:{
         fontSize: 15,
         color: 'black',
-        alignItems: 'center',  // Centrado
+        alignItems: 'center',  
     },
     txtSignUp: {
-        color: '#FF0000',
+        color: '#B72424',
         textDecorationLine: 'underline',
     },
 });
