@@ -1,17 +1,27 @@
 import React, { useState } from "react";
-import { ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { MaterialIcons, FontAwesome, AntDesign, FontAwesome5, Feather } from '@expo/vector-icons';
+import Collapsible from 'react-native-collapsible';
+import NavTop from "../components/NavTop";
+
+import firebaseApp from "../FireBaseAccess"
+import { collection, getFirestore, getDocs, addDoc } from "firebase/firestore";
+
+const db = getFirestore(firebaseApp)
 
 export default function RegisterScreen() {
     const navigation = useNavigation();
-    const [name, setName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [birthdate, setBirthdate] = useState(new Date());
+    const [birthdate, setBirthdate] = useState(new Date()); // Inicializar con la fecha actual
     const [role, setRole] = useState('Patient');
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false); 
+    const [language, setLanguage] = useState('English');
+
+    const [collapsedPersonalData, setCollapsedPersonalData] = useState(false);
+    const [collapsedSecurity, setCollapsedSecurity] = useState(true);
+    const [collapsedPreference, setCollapsedPreference] = useState(true);
 
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || birthdate;
@@ -19,68 +29,143 @@ export default function RegisterScreen() {
         setBirthdate(currentDate);
     };
 
+    const inicioEstado = {
+        name: '',
+        lastName: '',
+        email: '',
+        password: '',
+    }
+
+    const [estado, setEstado] = useState(inicioEstado)
+
+    const HandleChangeText = (value, name) => {
+        setEstado({ ...estado, [name]: value })
+    }
+
+    const RegisterUser = async () => {
+        try {
+            await addDoc(collection(db, 'Users'), { ...estado, birthdate })
+            Alert.alert('Alerta', 'El usuario se registró con éxito')
+            navigation.navigate('LoginScreen')
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.title}>VitalLearns</Text>
+            <NavTop/>
             <Text style={styles.subtitle}>Registration Form</Text>
             <Text style={styles.description}>Complete registration to personalize your experience.</Text>
-            <View style={styles.formSection}>
-                <Text style={styles.sectionTitle}>Basic Personal Data</Text>
-                <View style={styles.profilePicContainer}>
-                    <Image source={require('../img/brainVitalLearns.png')} style={styles.profilePic} />
-                    <TouchableOpacity style={styles.editPicButton}>
-                        <Text style={styles.editPicButtonText}>✎</Text>
-                    </TouchableOpacity>
-                </View>
-                <Text style={styles.general}>Name</Text>
-                <TextInput
-                    style={styles.input}
-                    value={name}
-                    onChangeText={setName}
-                />
-                <Text style={styles.general}>Last name</Text>
-                <TextInput
-                    style={styles.input}
-                    value={lastName}
-                    onChangeText={setLastName}
-                />
-                <Text style={styles.general}>Email</Text>
-                <TextInput
-                    style={styles.input}
-                    value={email}
-                    onChangeText={setEmail}
-                />
-                <Text style={styles.general}>Birthdate</Text>
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                    <View style={styles.dateInput}>
-                        <Text style={styles.dateText}>
-                            {birthdate.toLocaleDateString()}
-                        </Text>
+            
+            {/* Basic Personal Data Section */}
+            <TouchableOpacity onPress={() => setCollapsedPersonalData(!collapsedPersonalData)}>
+                <Text style={styles.sectionTitle}>Basic Personal Data <AntDesign name="down" size={24} color="black" /></Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={collapsedPersonalData}>
+                <View style={styles.section}>
+                    <View style={styles.profilePic}>
+                        <FontAwesome name="user-circle" size={80} color="#ccc" />
+                        <TouchableOpacity style={styles.editIcon}>
+                            <MaterialIcons name="edit" size={16} color="white" />
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={birthdate}
-                        mode="date"
-                        display="default"
-                        onChange={onDateChange}
+                    <Text style={styles.label}>Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(value) => HandleChangeText(value, 'name')}
+                        value={estado.name}
                     />
-                )}
-                <Text style={styles.general}>Role</Text>
-                <View style={styles.pickerContainer}>
-                    <Picker
-                        selectedValue={role}
-                        onValueChange={(itemValue) => setRole(itemValue)}
-                        style={styles.picker}
-                    >
-                        <Picker.Item label="Patient" value="Patient" />
-                        <Picker.Item label="Doctor" value="Doctor" />
-                        <Picker.Item label="Nurse" value="Nurse" />
-                        <Picker.Item label="Admin" value="Admin" />
-                    </Picker>
+                    <Text style={styles.label}>Last name</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(value) => HandleChangeText(value, 'lastName')}
+                        value={estado.lastName}
+                    />
+                    <Text style={styles.label}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(value) => HandleChangeText(value, 'email')}
+                        value={estado.email}
+                    />
+                    <Text style={styles.label}>Birthdate</Text>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                        <View style={styles.dateInput}>
+                            <Text style={styles.dateText}>
+                                {birthdate.toLocaleDateString('en-GB')}
+                                <FontAwesome5 name="calendar-plus" size={24} color="red" />
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={birthdate}
+                            mode="date"
+                            display="default"
+                            onChange={onDateChange}
+                        />
+                    )}
+                    <Text style={styles.label}>Role</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            selectedValue={role}
+                            onValueChange={(itemValue) => setRole(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Patient" value="Patient" />
+                            <Picker.Item label="Doctor" value="Doctor" />
+                            <Picker.Item label="Nurse" value="Nurse" />
+                            <Picker.Item label="Admin" value="Admin" />
+                        </Picker>
+                        <Feather name="plus-circle" size={24} color="red" />
+                    </View>
                 </View>
-            </View>
-            <TouchableOpacity style={styles.button}>
+            </Collapsible>
+
+            {/* Security Section */}
+            <TouchableOpacity onPress={() => setCollapsedSecurity(!collapsedSecurity)}>
+                <Text style={styles.sectionTitle}>Security <AntDesign name="down" size={24} color="black" /></Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={collapsedSecurity}>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Password</Text>
+                    <TextInput
+                        style={styles.input}
+                        secureTextEntry={true}
+                        onChangeText={(value) => HandleChangeText(value, 'password')}
+                        value={estado.password}
+                    />
+                    <Text style={styles.label}>Confirm Password</Text>
+                    <TextInput
+                        style={styles.input}
+                        secureTextEntry
+                    />
+                </View>
+            </Collapsible>
+
+            {/* Preference and Personalization Section */}
+            <TouchableOpacity onPress={() => setCollapsedPreference(!collapsedPreference)}>
+                <Text style={styles.sectionTitle}>Preference and Personalization <AntDesign name="down" size={24} color="black" /></Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={collapsedPreference}>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Preferred Language</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            selectedValue={language}
+                            onValueChange={(itemValue) => setLanguage(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="English" value="English" />
+                            <Picker.Item label="Spanish" value="Spanish" />
+                            <Picker.Item label="French" value="French" />
+                            <Picker.Item label="German" value="German" />
+                        </Picker>
+                    </View>
+                </View>
+            </Collapsible>
+
+            <TouchableOpacity style={styles.button} onPress={RegisterUser}>
                 <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelButton}>
@@ -97,72 +182,72 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
     },
-    title: {
-        fontSize: 24,
+    navTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#D32F2F',
+        padding: 10,
+        borderRadius: 5,
+    },
+    navTitle: {
+        fontSize: 18,
         fontWeight: 'bold',
-        color: '#D32F2F',
-        textAlign: 'center',
-        marginVertical: 10,
+        color: '#fff',
+        marginLeft: 10,
     },
     subtitle: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: 'bold',
         color: 'black',
         textAlign: 'center',
-        marginBottom: 5,
+        marginTop: 20,
     },
     description: {
         fontSize: 16,
         color: 'black',
         textAlign: 'left',
         marginBottom: 20,
+        textAlign: 'center',
     },
-    general:{
-        fontSize: 16,
-        color: 'black',
-        textAlign: 'left',
-    },
-    formSection: {
+    section: {
         backgroundColor: '#F5F5F5',
         padding: 20,
         borderRadius: 10,
         marginBottom: 20,
     },
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 15,
-    },
-    profilePicContainer: {
-        alignItems: 'center',
-        marginBottom: 20,
+        textAlign: 'left',
     },
     profilePic: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: '#ccc',
+        alignItems: 'center',
+        marginBottom: 20,
+        position: 'relative',
     },
-    editPicButton: {
+    editIcon: {
         position: 'absolute',
         bottom: 0,
-        right: 10,
-        backgroundColor: '#D32F2F',
-        borderRadius: 15,
-        padding: 5,
+        right: -10,
+        backgroundColor: 'red',
+        borderRadius: 20,
+        padding: 4,
     },
-    editPicButtonText: {
-        color: '#fff',
-        fontSize: 12,
+    label: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
     input: {
-        backgroundColor: '#fff',
+        fontSize: 16,
+        backgroundColor: 'white',
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 5,
         paddingHorizontal: 10,
-        paddingVertical: 15,
-        marginBottom: 15,
+        paddingVertical: 10,
+        marginBottom: 10,
     },
     dateInput: {
         backgroundColor: '#fff',
@@ -170,8 +255,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         paddingHorizontal: 10,
-        paddingVertical: 15,
-        marginBottom: 15,
+        paddingVertical: 10,
+        marginBottom: 10,
         justifyContent: 'center',
     },
     dateText: {
@@ -182,10 +267,10 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 5,
-        marginBottom: 15,
+        marginBottom: 10,
     },
     picker: {
-        height: 50,
+        height: 40,
         width: '100%',
     },
     button: {
@@ -197,19 +282,18 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 16,
         fontWeight: 'bold',
+        fontSize: 16,
     },
     cancelButton: {
         padding: 15,
         borderRadius: 5,
         alignItems: 'center',
-        borderColor: '#D32F2F',
-        borderWidth: 1,
+        marginBottom: 15,
     },
     cancelButtonText: {
         color: '#D32F2F',
-        fontSize: 16,
         fontWeight: 'bold',
+        fontSize: 16,
     },
 });
