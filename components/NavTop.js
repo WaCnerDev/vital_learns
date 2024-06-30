@@ -40,11 +40,11 @@ export default function NavTop() {
 const styles = StyleSheet.create({
   backgroundcontainer: {
     margin: 0,
-    marginTop: 45,
+    paddingTop: 20,
     display: "flex",
     flexDirection: "row",
     width: "100%",
-    height: 50,
+    height: 80,
     backgroundColor: "#B72424",
     display: "flex",
     alignItems: "center",
