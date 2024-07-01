@@ -1,16 +1,29 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LoginHeader from "../components/LoginHeader";
 import { FontAwesome, Entypo, AntDesign } from "@expo/vector-icons";
+import { loginUser } from "../FireBaseAccess";
 
 export default function LoginScreen() {
     const navigation = useNavigation();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
+    };
+
+    const handleLogin = async () => {
+        try {
+            const user = await loginUser(email, password);
+            Alert.alert("Login Successful", `Welcome to Vital Learn`);
+            navigation.navigate("MenuScreen");
+        } catch (error) {
+            Alert.alert("Login Failed", error.message);
+        }
     };
 
     return (
@@ -23,7 +36,13 @@ export default function LoginScreen() {
                 <Text style={styles.txtLogin}>Enter your email</Text>
                 <View style={styles.inputContainer}>
                     <FontAwesome style={styles.icon} name="user-circle-o" size={30} color="#B72424" />
-                    <TextInput style={styles.txtInput} />
+                    <TextInput 
+                        style={styles.txtInput} 
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
                 </View>
 
                 <Text style={styles.txtLogin}>Enter your password</Text>
@@ -32,6 +51,9 @@ export default function LoginScreen() {
                     <TextInput
                         style={styles.txtInput}
                         secureTextEntry={!passwordVisible}
+                        value={password}
+                        onChangeText={setPassword}
+                        autoCapitalize="none"
                     />
                     <TouchableOpacity onPress={togglePasswordVisibility}>
                         <AntDesign name={passwordVisible ? "eye" : "eyeo"} size={24} color="black" />
@@ -42,7 +64,7 @@ export default function LoginScreen() {
                     <Text style={styles.txtForgot}>Forgot your password?</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("MenuScreen")} style={styles.btnLogin}>
+                <TouchableOpacity onPress={handleLogin} style={styles.btnLogin}>
                     <Text style={styles.txtLoginButton}>Sign In</Text>
                 </TouchableOpacity>
 

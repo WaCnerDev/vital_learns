@@ -7,7 +7,8 @@ import { MaterialIcons, FontAwesome, AntDesign, FontAwesome5, Feather } from '@e
 import Collapsible from 'react-native-collapsible';
 import NavTop from "../components/NavTop";
 
-import firebaseApp from "../FireBaseAccess";
+import firebaseApp, { auth } from "../FireBaseAccess";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getFirestore, addDoc } from "firebase/firestore";
 
 const db = getFirestore(firebaseApp);
@@ -53,11 +54,23 @@ export default function RegisterScreen() {
 
     const RegisterUser = async () => {
         try {
-            await addDoc(collection(db, 'Users'), { ...estado, birthdate, roles, language, gender });
-            Alert.alert('Alerta', 'El usuario se registró con éxito');
+            const userCredential = await createUserWithEmailAndPassword(auth, estado.email, estado.password);
+            const user = userCredential.user;
+
+            await addDoc(collection(db, 'Users'), { 
+                uid: user.uid,
+                ...estado, 
+                birthdate, 
+                roles, 
+                language, 
+                gender 
+            });
+
+            Alert.alert('Alerta', `El usuario se registró con éxito`);
             navigation.navigate('LoginScreen');
         } catch (error) {
             console.error(error);
+            Alert.alert('Error', error.message);
         }
     };
 
@@ -102,6 +115,8 @@ export default function RegisterScreen() {
                         style={styles.input}
                         onChangeText={(value) => HandleChangeText(value, 'email')}
                         value={estado.email}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
                     />
                     <View style={styles.row}>
                         <View style={styles.inputContainer}>
@@ -164,6 +179,7 @@ export default function RegisterScreen() {
                         secureTextEntry={true}
                         onChangeText={(value) => HandleChangeText(value, 'password')}
                         value={estado.password}
+                        autoCapitalize="none"
                     />
                     <Text style={styles.label}>Confirm Password</Text>
                     <TextInput
@@ -199,9 +215,9 @@ export default function RegisterScreen() {
                             onValueChange={(itemValue) => setGender(itemValue)}
                             style={styles.picker}
                         >
-                            <Picker.Item label="Masculine" value="masculine" />
-                            <Picker.Item label="Woman" value="woman" />
-                            <Picker.Item label="No mencionar" value="no mencionar" />
+                            <Picker.Item label="Masculine" value="Masculine" />
+                            <Picker.Item label="Woman" value="Woman" />
+                            <Picker.Item label="Other" value="Other" />
                         </Picker>
                     </View>
                 </View>
