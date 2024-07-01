@@ -22,7 +22,7 @@ export default function LoginHeader2() {
 const styles = StyleSheet.create({
   backgroundcontainer: {
     margin:0,
-    marginTop: 45,
+    paddingTop: 20,
     width: "100%",
     height: 306,
     backgroundColor: "#B72424",
