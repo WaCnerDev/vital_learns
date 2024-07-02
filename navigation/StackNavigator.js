@@ -14,6 +14,7 @@ import MenuScreen from "../screens/MenuScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ReadingScreen from "../screens/ReadingScreen";
 import VideoScreen from "../screens/VideoScreen";
+import TabsNavigartor from "../navigation/TabsNavigator"
 
 const Stack = createStackNavigator();
 
@@ -36,8 +37,18 @@ function Stacks() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="TabsNavigartor"
+        component={TabsNavigartor}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MedicineScreen"
+        component={MedicineScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="InfographicScreen"
+        component={InfographicScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

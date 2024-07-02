@@ -20,7 +20,7 @@ export default function LoginScreen() {
         try {
             const user = await loginUser(email, password);
             Alert.alert("Login Successful", `Welcome to Vital Learn`);
-            navigation.navigate("HomeScreen");
+            navigation.navigate("TabsNavigartor");
         } catch (error) {
             Alert.alert("Login Failed", error.message);
         }
