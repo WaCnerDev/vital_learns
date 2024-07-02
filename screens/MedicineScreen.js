@@ -90,6 +90,7 @@ const MedicineScreen = () => {
         />
       </View>
     </View>
+    
   );
 };
 

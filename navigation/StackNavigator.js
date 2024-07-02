@@ -15,6 +15,8 @@ import ProfileScreen from "../screens/ProfileScreen";
 import ReadingScreen from "../screens/ReadingScreen";
 import VideoScreen from "../screens/VideoScreen";
 import TabsNavigartor from "../navigation/TabsNavigator"
+import TabsInfo from "../navigation/TabsInfo"
+import TabsMedicine from "../navigation/TabsMedicine"
 
 const Stack = createStackNavigator();
 

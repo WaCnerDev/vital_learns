@@ -18,10 +18,10 @@ import VideoScreen from "../screens/VideoScreen";
 
 const Tab = createBottomTabNavigator();
 
-export default function TabsNavigator() {
+export default function TabsInfo() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="InfographicScreen"
       screenOptions={{
         tabBarStyle: {
           height: 70,
@@ -52,31 +52,11 @@ export default function TabsNavigator() {
         }}
       />
       <Tab.Screen
-        name="Reading"
-        component={ReadingScreen}
-        options={{
-          tabBarIcon: () => (
-            <Feather name="book-open" size={40} color="black" />
-          ),
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
         name="Infographics"
         component={InfographicScreen}
         options={{
           tabBarIcon: () => (
             <Ionicons name="images-outline" size={40} color="black" />
-          ),
-          headerShown: false,
-        }}
-      />
-       <Tab.Screen
-        name="Medicine"
-        component={MedicineScreen}
-        options={{
-          tabBarIcon: () => (
-            <Ionicons name="bandage-outline" size={40} color="black" />
           ),
           headerShown: false,
         }}
