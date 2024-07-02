@@ -7,6 +7,8 @@ import firebaseApp from "../FireBaseAccess";
 import { addDoc, collection, getFirestore, getDocs, doc, deleteDoc, getDoc, setDoc } from "firebase/firestore";
 import SandIA from "../components/SandIA";
 
+import TabsNavigator from "../navigation/TabsNavigator";
+
 const db = getFirestore(firebaseApp);
 
 export default function HomeScreen() {
@@ -54,6 +56,7 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
       </View>
+      <TabsNavigator/>
     </View>
   );
 }
@@ -78,6 +81,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     marginHorizontal: 25,
+    borderWidth:1,
+    borderColor:'black'
   },
   headerContent: {
     marginHorizontal: 25,
