@@ -3,14 +3,17 @@ import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
 import NavTop from "../components/NavTop";
 import VideoThumbnail from "../components/VideoThumbnail";
 import { AntDesign, SimpleLineIcons, Feather } from "@expo/vector-icons";
-import firebaseApp from "../FireBaseAccess";
-import { addDoc, collection, getFirestore, getDocs, doc, deleteDoc, getDoc, setDoc } from "firebase/firestore";
+import appFirebase from "../FireBaseAccess";
+import { collection, getFirestore, getDocs} from "firebase/firestore";
+import Filters from "../components/Filters";
 import SandIA from "../components/SandIA";
 
-const db = getFirestore(firebaseApp);
+const db = getFirestore(appFirebase);
 
-export default function HomeScreen() {
+export default function VideoScreen() {
   const [list, setList] = useState([]);
+
+  const labels = [];
 
   useEffect(() => {
     const getList = async () => {
@@ -38,9 +41,9 @@ export default function HomeScreen() {
   return (
     <View style={styles.mainContainer}>
       <NavTop />
-      <SandIA title={"Explore available content"}/>
+      <SandIA title={"Videos for a Healthy Life"}/>
+      <Filters labels={labels}/>
       <View style={styles.popularContent}>
-        <Text style={styles.subtitle}>The most popular</Text>
         <ScrollView contentContainerStyle={styles.scrollView}>
           {list.map((video) => (
             <View key={video.id}>

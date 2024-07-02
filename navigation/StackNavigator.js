@@ -11,11 +11,12 @@ import MenuScreen from "../screens/MenuScreen";
 import MedicineScreen from "../screens/MedicineScreen";
 
 
+
 const Stack = createStackNavigator();
 
 function Stacks() {
     return (
-        <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Navigator initialRouteName="RecoverScreen">
             <Stack.Screen name="LoginScreen" component={LoginScreen} options={{headerShown: false, }}/>
             <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{headerShown: false, }}/>
             <Stack.Screen name="RecoverScreen" component={RecoverScreen} options={{headerShown: false, }}/>
@@ -23,7 +24,6 @@ function Stacks() {
             <Stack.Screen name="InfographicScreen" component={InfographicGalleryScreen} options={{headerShown: false, }}/>
             <Stack.Screen name="MenuScreen" component={MenuScreen} options={{headerShown: false, }}/>
             <Stack.Screen name="MedicineScreen" component={MedicineScreen} options={{headerShown: false, }}/>
-            
         </Stack.Navigator>
     );
 }
