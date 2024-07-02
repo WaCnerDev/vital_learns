@@ -63,7 +63,7 @@ export default function RegisterScreen() {
     if (!roles.includes(role)) {
       setRoles([...roles, role]);
     } else {
-      Alert.alert("Alerta", "El rol ya ha sido añadido");
+      Alert.alert("Alert", "Role already chosen");
     }
   };
 
@@ -85,7 +85,7 @@ export default function RegisterScreen() {
         gender,
       });
 
-      Alert.alert("Alerta", `El usuario se registró con éxito`);
+      Alert.alert("Alert", `The user registered successfully`);
       navigation.navigate("LoginScreen");
     } catch (error) {
       console.error(error);
