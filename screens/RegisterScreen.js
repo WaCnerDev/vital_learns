@@ -7,18 +7,20 @@ import { MaterialIcons, FontAwesome, AntDesign, FontAwesome5, Feather } from '@e
 import Collapsible from 'react-native-collapsible';
 import NavTop from "../components/NavTop";
 
-import firebaseApp from "../FireBaseAccess"
-import { collection, getFirestore, getDocs, addDoc } from "firebase/firestore";
+import firebaseApp, { auth } from "../FireBaseAccess";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, getFirestore, addDoc } from "firebase/firestore";
 
-const db = getFirestore(firebaseApp)
+const db = getFirestore(firebaseApp);
 
 export default function RegisterScreen() {
     const navigation = useNavigation();
     const [birthdate, setBirthdate] = useState(new Date()); // Inicializar con la fecha actual
     const [role, setRole] = useState('Patient');
+    const [roles, setRoles] = useState([]);
     const [showDatePicker, setShowDatePicker] = useState(false); 
     const [language, setLanguage] = useState('English');
-
+    const [gender, setGender] = useState('no mencionar');
     const [collapsedPersonalData, setCollapsedPersonalData] = useState(false);
     const [collapsedSecurity, setCollapsedSecurity] = useState(true);
     const [collapsedPreference, setCollapsedPreference] = useState(true);
@@ -34,23 +36,43 @@ export default function RegisterScreen() {
         lastName: '',
         email: '',
         password: '',
-    }
+    };
 
-    const [estado, setEstado] = useState(inicioEstado)
+    const [estado, setEstado] = useState(inicioEstado);
 
     const HandleChangeText = (value, name) => {
-        setEstado({ ...estado, [name]: value })
-    }
+        setEstado({ ...estado, [name]: value });
+    };
+
+    const addRole = () => {
+        if (!roles.includes(role)) {
+            setRoles([...roles, role]);
+        } else {
+            Alert.alert('Alerta', 'El rol ya ha sido añadido');
+        }
+    };
 
     const RegisterUser = async () => {
         try {
-            await addDoc(collection(db, 'Users'), { ...estado, birthdate })
-            Alert.alert('Alerta', 'El usuario se registró con éxito')
-            navigation.navigate('LoginScreen')
+            const userCredential = await createUserWithEmailAndPassword(auth, estado.email, estado.password);
+            const user = userCredential.user;
+
+            await addDoc(collection(db, 'Users'), { 
+                uid: user.uid,
+                ...estado, 
+                birthdate, 
+                roles, 
+                language, 
+                gender 
+            });
+
+            Alert.alert('Alerta', `El usuario se registró con éxito`);
+            navigation.navigate('LoginScreen');
         } catch (error) {
-            console.error(error)
+            console.error(error);
+            Alert.alert('Error', error.message);
         }
-    }
+    };
 
     return (
         <ScrollView style={styles.container}>
@@ -60,7 +82,7 @@ export default function RegisterScreen() {
             
             {/* Basic Personal Data Section */}
             <TouchableOpacity onPress={() => setCollapsedPersonalData(!collapsedPersonalData)}>
-                <Text style={styles.sectionTitle}>Basic Personal Data <AntDesign name="down" size={24} color="black" /></Text>
+                <Text style={styles.sectionTitle}>Basic Personal Data <AntDesign name="down" size={20} color="black" /></Text>
             </TouchableOpacity>
             <Collapsible collapsed={collapsedPersonalData}>
                 <View style={styles.section}>
@@ -70,61 +92,84 @@ export default function RegisterScreen() {
                             <MaterialIcons name="edit" size={16} color="white" />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.label}>Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(value) => HandleChangeText(value, 'name')}
-                        value={estado.name}
-                    />
-                    <Text style={styles.label}>Last name</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(value) => HandleChangeText(value, 'lastName')}
-                        value={estado.lastName}
-                    />
+                    <View style={styles.row}>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(value) => HandleChangeText(value, 'name')}
+                                value={estado.name}
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Last name</Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(value) => HandleChangeText(value, 'lastName')}
+                                value={estado.lastName}
+                            />
+                        </View>
+                    </View>
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         style={styles.input}
                         onChangeText={(value) => HandleChangeText(value, 'email')}
                         value={estado.email}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
                     />
-                    <Text style={styles.label}>Birthdate</Text>
-                    <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                        <View style={styles.dateInput}>
-                            <Text style={styles.dateText}>
-                                {birthdate.toLocaleDateString('en-GB')}
-                                <FontAwesome5 name="calendar-plus" size={24} color="red" />
-                            </Text>
+                    <View style={styles.row}>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Birthdate</Text>
+                            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                                <View style={styles.dateInput}>
+                                    <Text style={styles.dateText}>
+                                        {birthdate.toLocaleDateString('en-GB')}
+                                    </Text>
+                                </View>
+                                <FontAwesome5 style={styles.calendarIcon} name="calendar-plus" size={20} color="#B72424" />
+                            </TouchableOpacity>
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={birthdate}
+                                    mode="date"
+                                    display="default"
+                                    onChange={onDateChange}
+                                />
+                            )}
                         </View>
-                    </TouchableOpacity>
-                    {showDatePicker && (
-                        <DateTimePicker
-                            value={birthdate}
-                            mode="date"
-                            display="default"
-                            onChange={onDateChange}
-                        />
-                    )}
-                    <Text style={styles.label}>Role</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={role}
-                            onValueChange={(itemValue) => setRole(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Patient" value="Patient" />
-                            <Picker.Item label="Doctor" value="Doctor" />
-                            <Picker.Item label="Nurse" value="Nurse" />
-                            <Picker.Item label="Admin" value="Admin" />
-                        </Picker>
-                        <Feather name="plus-circle" size={24} color="red" />
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Role</Text>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={role}
+                                    onValueChange={(itemValue) => setRole(itemValue)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="Patient" value="Patient" />
+                                    <Picker.Item label="Doctor" value="Doctor" />
+                                    <Picker.Item label="Nurse" value="Nurse" />
+                                    <Picker.Item label="Admin" value="Admin" />
+                                </Picker>
+                            </View>
+                            <TouchableOpacity onPress={addRole}>
+                                <Feather style={styles.circleIcon} name="plus-circle" size={24} color="#B72424" />
+                            </TouchableOpacity>
+                        </View>
                     </View>
+                    {roles.length > 0 && (
+                        <View style={styles.rolesContainer}>
+                            {roles.map((r, index) => (
+                                <Text key={index} style={styles.roleText}>{r}</Text>
+                            ))}
+                        </View>
+                    )}
                 </View>
             </Collapsible>
 
             {/* Security Section */}
             <TouchableOpacity onPress={() => setCollapsedSecurity(!collapsedSecurity)}>
-                <Text style={styles.sectionTitle}>Security <AntDesign name="down" size={24} color="black" /></Text>
+                <Text style={styles.sectionTitle}>Security <AntDesign name="down" size={20} color="black" /></Text>
             </TouchableOpacity>
             <Collapsible collapsed={collapsedSecurity}>
                 <View style={styles.section}>
@@ -134,6 +179,7 @@ export default function RegisterScreen() {
                         secureTextEntry={true}
                         onChangeText={(value) => HandleChangeText(value, 'password')}
                         value={estado.password}
+                        autoCapitalize="none"
                     />
                     <Text style={styles.label}>Confirm Password</Text>
                     <TextInput
@@ -145,7 +191,7 @@ export default function RegisterScreen() {
 
             {/* Preference and Personalization Section */}
             <TouchableOpacity onPress={() => setCollapsedPreference(!collapsedPreference)}>
-                <Text style={styles.sectionTitle}>Preference and Personalization <AntDesign name="down" size={24} color="black" /></Text>
+                <Text style={styles.sectionTitle}>Preference and Personalization <AntDesign name="down" size={20} color="black" /></Text>
             </TouchableOpacity>
             <Collapsible collapsed={collapsedPreference}>
                 <View style={styles.section}>
@@ -160,6 +206,18 @@ export default function RegisterScreen() {
                             <Picker.Item label="Spanish" value="Spanish" />
                             <Picker.Item label="French" value="French" />
                             <Picker.Item label="German" value="German" />
+                        </Picker>
+                    </View>
+                    <Text style={styles.label}>Gender</Text>
+                    <View style={styles.pickerContainer}>
+                        <Picker
+                            selectedValue={gender}
+                            onValueChange={(itemValue) => setGender(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Masculine" value="Masculine" />
+                            <Picker.Item label="Woman" value="Woman" />
+                            <Picker.Item label="Other" value="Other" />
                         </Picker>
                     </View>
                 </View>
@@ -179,8 +237,10 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 7,
         backgroundColor: 'white',
+        width: '100%',
+        height: 'auto',
     },
     navTop: {
         flexDirection: 'row',
@@ -227,12 +287,23 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     editIcon: {
-        position: 'absolute',
-        bottom: 0,
-        right: -10,
-        backgroundColor: 'red',
+        position: 'flex',
+        bottom: 20,
+        right: -30,
+        backgroundColor: '#B72424',
         borderRadius: 20,
         padding: 4,
+    },
+    circleIcon: {
+        flex: 1,
+        bottom: 42,
+        right: -130,
+    },
+    calendarIcon:{
+        flex: 1,
+        bottom: 42,
+        right: -100,
+
     },
     label: {
         fontSize: 14,
@@ -265,13 +336,24 @@ const styles = StyleSheet.create({
     pickerContainer: {
         backgroundColor: '#fff',
         borderColor: '#ddd',
+        alignItems: 'right',
+        width: '100%',
         borderWidth: 1,
         borderRadius: 5,
         marginBottom: 10,
     },
     picker: {
         height: 40,
+        bottom: 10,
         width: '100%',
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    inputContainer: {
+        flex: 1,
+        marginRight: 10,
     },
     button: {
         backgroundColor: '#D32F2F',
@@ -295,5 +377,13 @@ const styles = StyleSheet.create({
         color: '#D32F2F',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    rolesContainer: {
+        marginTop: 10,
+    },
+    roleText: {
+        fontSize: 16,
+        color: '#333',
+        paddingVertical: 2,
     },
 });

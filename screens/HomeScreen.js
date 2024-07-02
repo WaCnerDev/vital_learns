@@ -3,11 +3,11 @@ import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
 import NavTop from "../components/NavTop";
 import VideoThumbnail from "../components/VideoThumbnail";
 import { AntDesign, SimpleLineIcons, Feather } from "@expo/vector-icons";
-import appFirebase from "../FireBaseAccess";
+import firebaseApp from "../FireBaseAccess";
 import { addDoc, collection, getFirestore, getDocs, doc, deleteDoc, getDoc, setDoc } from "firebase/firestore";
 import SandIA from "../components/SandIA";
 
-const db = getFirestore(appFirebase);
+const db = getFirestore(firebaseApp);
 
 export default function HomeScreen() {
   const [list, setList] = useState([]);
