@@ -2,11 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function NavTop() {
+  const navigation = useNavigation();
   return (
     <View style={styles.backgroundcontainer}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
         <FontAwesome5
           style={styles.leaveProfile}
           name="user-minus"

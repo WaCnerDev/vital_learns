@@ -20,16 +20,16 @@ export default function LoginScreen() {
         try {
             const user = await loginUser(email, password);
             Alert.alert("Login Successful", `Welcome to Vital Learn`);
-            navigation.navigate("MenuScreen");
+            navigation.navigate("HomeScreen");
         } catch (error) {
             Alert.alert("Login Failed", error.message);
         }
     };
 
     return (
-        <ScrollView>
+        <ScrollView style={styles.scroll}>
+            <LoginHeader/>
             <View style={styles.container}>
-                <LoginHeader/>
                 <Text style={styles.txtTitulo}>Welcome To VitalLearns!</Text>
                 <Text style={styles.txtSubtitulo}>Log in with your VitalLearn account</Text>
 
@@ -46,7 +46,7 @@ export default function LoginScreen() {
                 </View>
 
                 <Text style={styles.txtLogin}>Enter your password</Text>
-                <View style={styles.inputContainer}>
+                <View style={[styles.inputContainer, styles.lastchild]}>
                     <Entypo style={styles.icon} name="lock" size={30} color="#B72424" />
                     <TextInput
                         style={styles.txtInput}
@@ -68,10 +68,10 @@ export default function LoginScreen() {
                     <Text style={styles.txtLoginButton}>Sign In</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
+                <TouchableOpacity style={styles.sectionNoAccount} onPress={() => navigation.navigate("RegisterScreen")}>
                     <Text style={styles.txtNonAccount}>
-                        Don't have an account?
-                        <Text style={styles.txtSignUp}>Sign Up Now</Text>
+                        Don't have an account? 
+                        <Text style={styles.txtSignUp}> Sign Up Now</Text>
                     </Text>
                 </TouchableOpacity>
                 <StatusBar style="auto" />
@@ -83,9 +83,8 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "flex-start", 
-        width: "100%",
-        height: "auto",
+        marginHorizontal:20,
+        marginTop:20
     },
     txtTitulo: {
         fontSize: 25,
@@ -104,10 +103,11 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: '90%',
+        height:40,
+        width: '100%',
         marginBottom: 20,
         backgroundColor: 'lightgrey',
-        borderRadius: 25,
+        borderRadius: 10,
         paddingHorizontal: 15,
     },
     txtInput: {
@@ -116,13 +116,12 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     btnLogin: {
-        width: "100%",
+        width:'100%',
         height: 38,
         backgroundColor: "#B72424",
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 10,
     },
     txtLoginButton: {
         color: "white",
@@ -133,6 +132,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: 'black',
         textAlign: 'left',
+        marginBottom:10
     },
     txtForgot: {
         fontSize: 15,
@@ -150,5 +150,15 @@ const styles = StyleSheet.create({
     txtSignUp: {
         color: '#B72424',
         textDecorationLine: 'underline',
+        marginLeft:5,
+        fontWeight:"700"
     },
+    lastchild:{
+        marginBottom:5
+    },
+    sectionNoAccount:{
+        marginTop:15,
+        width:'100%',
+        alignItems:'center'
+    }
 });

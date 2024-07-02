@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import LoginHeader2 from "../components/LoginHeader2";
 import { Entypo } from "@expo/vector-icons";
@@ -12,38 +13,50 @@ import { FontAwesome } from "@expo/vector-icons";
 
 export default function RecoverScreen() {
   return (
-    <View>
-      <LoginHeader2 />
-      <Text style={styles.txtTitulo}>Recover Your Password Here</Text>
-      <Text style={styles.txtSubtitulo}>
-        Complete the following form to recover your password
-      </Text>
-      <View style={styles.formContainer}>
-        <View style={styles.fieldset}>
-          <Text style={styles.labelForm}>Enter your email</Text>
-          <View style={styles.inputContainer}>
-            <FontAwesome style={styles.icon} name="user-circle-o" size={30} color="#B72424" />
-            <TextInput style={styles.txtInput} />
-          </View>
-        </View>
-        <View style={styles.fieldset}>
-          <Text style={styles.labelForm}>
-            Enter the last password you remember
-          </Text>
-          <View style={styles.inputContainer}>
-          <Entypo style={styles.icon} name="lock" size={30} color="#B72424" />
-            <TextInput style={styles.txtInput} secureTextEntry={true}/>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.btn}>
-          <Text style={styles.txtButton}>Send Reset Link</Text>
-        </TouchableOpacity>
-        <Text style={styles.txtQuestion}>
-          Don't have an account?
-          <Text style={styles.txtSignUp}> Sign Up Now</Text>
+    <ScrollView>
+      <View>
+        <LoginHeader2 />
+        <Text style={styles.txtTitulo}>Recover Your Password Here</Text>
+        <Text style={styles.txtSubtitulo}>
+          Complete the following form to recover your password
         </Text>
+        <View style={styles.formContainer}>
+          <View style={styles.fieldset}>
+            <Text style={styles.labelForm}>Enter your email</Text>
+            <View style={styles.inputContainer}>
+              <FontAwesome
+                style={styles.icon}
+                name="user-circle-o"
+                size={30}
+                color="#B72424"
+              />
+              <TextInput style={styles.txtInput} />
+            </View>
+          </View>
+          <View style={styles.fieldset}>
+            <Text style={styles.labelForm}>
+              Enter the last password you remember
+            </Text>
+            <View style={styles.inputContainer}>
+              <Entypo
+                style={styles.icon}
+                name="lock"
+                size={30}
+                color="#B72424"
+              />
+              <TextInput style={styles.txtInput} secureTextEntry={true} />
+            </View>
+          </View>
+          <TouchableOpacity style={styles.btn}>
+            <Text style={styles.txtButton}>Send Reset Link</Text>
+          </TouchableOpacity>
+          <Text style={styles.txtQuestion}>
+            Don't have an account?
+            <Text style={styles.txtSignUp}> Sign Up Now</Text>
+          </Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -65,7 +78,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   formContainer: {
-    marginTop:35,
+    marginTop: 35,
     marginHorizontal: 25,
   },
   labelForm: {
@@ -87,7 +100,7 @@ const styles = StyleSheet.create({
   },
   txtInput: {
     width: "100%",
-    fontSize:18,
+    fontSize: 18,
     height: "100%",
     paddingLeft: 5,
     borderRadius: 10,
@@ -103,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 60,
+    marginTop: 30,
   },
   txtButton: {
     color: "white",
@@ -120,6 +133,6 @@ const styles = StyleSheet.create({
   txtSignUp: {
     color: "#B72424",
     textDecorationLine: "underline",
-    fontWeight:'bold',
+    fontWeight: "bold",
   },
 });

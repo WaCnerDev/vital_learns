@@ -1,12 +1,14 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function LoginHeader2() {
+  const navigation = useNavigation();
   return (
     <View style={styles.backgroundcontainer}>
       <View>
-        <TouchableOpacity style={styles.btnBack}>
+        <TouchableOpacity style={styles.btnBack} onPress={() => navigation.navigate("LoginScreen")}>
           <AntDesign name="leftcircleo" size={38} color="white" />
         </TouchableOpacity>
         <Image
