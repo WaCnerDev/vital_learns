@@ -79,8 +79,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     marginHorizontal: 25,
-    borderWidth:1,
-    borderColor:'black'
   },
   headerContent: {
     marginHorizontal: 25,
