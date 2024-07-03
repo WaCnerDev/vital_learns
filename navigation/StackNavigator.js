@@ -7,13 +7,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import RecoverScreen from "../screens/RecoverScreen";
-import HomeScreen from "../screens/HomeScreen";
-import MedicineScreen from "../screens/MedicineScreen";
-import InfographicScreen from "../screens/InfographicScreen";
-import MenuScreen from "../screens/MenuScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import ReadingScreen from "../screens/ReadingScreen";
-import VideoScreen from "../screens/VideoScreen";
 import TabsNavigartor from "../navigation/TabsNavigator"
 
 const Stack = createStackNavigator();
@@ -40,16 +33,19 @@ function Stacks() {
         name="TabsNavigartor"
         component={TabsNavigartor}
         options={{ headerShown: false }}
+        initialParams={{ routeName: 'TabsNavigartor' }}
       />
       <Stack.Screen
         name="MedicineScreen"
-        component={MedicineScreen}
+        component={TabsNavigartor}
         options={{ headerShown: false }}
+        initialParams={{ routeName: 'MedicineScreen' }}
       />
       <Stack.Screen
         name="InfographicScreen"
-        component={InfographicScreen}
+        component={TabsNavigartor}
         options={{ headerShown: false }}
+        initialParams={{ routeName: 'InfographicScreen' }}
       />
     </Stack.Navigator>
   );
